@@ -1,0 +1,19 @@
+# alpine 3.22.2
+FROM alpine@sha256:85f2b723e106c34644cd5851d7e81ee87da98ac54672b29947c052a45d31dc2f
+
+COPY apk/repositories.serve /etc/apk/repositories
+
+RUN apk add --no-cache curl build-base git fuse-dev fuse-static fuse
+
+# install rust
+RUN curl --proto '=https' --tlsv1.3 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup install 1.91.0 && rustup default 1.91.0
+RUN rustup target add x86_64-unknown-linux-musl
+
+# build sqlitesuperfs
+WORKDIR /workspace/rust
+ARG GH_PAT
+RUN git clone "https://github.com/rhodey/sqlitesuperfs.git" .
+RUN cargo fetch --locked --target=x86_64-unknown-linux-musl
+RUN cargo build --locked --target=x86_64-unknown-linux-musl --release

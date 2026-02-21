@@ -1,0 +1,194 @@
+volumes:
+  minio:
+  psql:
+
+networks:
+  locknet:
+    name: locknet
+    external: true
+
+services:
+  minio:
+    container_name: minio
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    ports:
+      - 9000:9000
+    volumes:
+      - minio:/data
+    environment:
+      MINIO_ROOT_USER: abc12345
+      MINIO_ROOT_PASSWORD: abc12345
+    command: server /data
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.2
+
+  minio-ready:
+    container_name: minio-ready
+    image: amazon/aws-cli
+    depends_on:
+      - minio
+    env_file: .env
+    volumes:
+      - ./config.yml:/khost/config.yml
+      - ./node/minio.sh:/bin/minio.sh
+    entrypoint: /bin/minio.sh
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.3
+
+  psql:
+    image: postgres:16-alpine
+    container_name: psql
+    ports:
+      - 5432:5432
+    volumes:
+      - psql:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=psql
+      - POSTGRES_PASSWORD=psql
+      - POSTGRES_DATABASE=psql
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.4
+
+  keys1:
+    container_name: keys1
+    image: lockhost-keys-test-app
+    depends_on:
+      - minio-ready
+      - psql
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse
+    volumes:
+      - /tmp/read1:/tmp/write
+      - /tmp/write1:/tmp/read
+
+  keys2:
+    container_name: keys2
+    image: lockhost-keys-test-app
+    depends_on:
+      - minio-ready
+      - psql
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse
+    volumes:
+      - /tmp/read2:/tmp/write
+      - /tmp/write2:/tmp/read
+
+  keys3:
+    container_name: keys3
+    image: lockhost-keys-test-app
+    depends_on:
+      - minio-ready
+      - psql
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse
+    volumes:
+      - /tmp/read3:/tmp/write
+      - /tmp/write3:/tmp/read
+
+  khost1:
+    container_name: khost1
+    image: lockhost-keys-test-khost
+    depends_on:
+      - keys1
+    env_file: .env
+    environment:
+      host_id: "172.77.0.11"
+    volumes:
+      - /tmp/read1:/tmp/read
+      - /tmp/write1:/tmp/write
+      - /tmp/swtpm1:/tmp/swtpm
+    ports:
+      - "8881:8880"
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.11
+
+  khost2:
+    container_name: khost2
+    image: lockhost-keys-test-khost
+    depends_on:
+      - keys2
+    env_file: .env
+    environment:
+      host_id: "172.77.0.12"
+    volumes:
+      - /tmp/read2:/tmp/read
+      - /tmp/write2:/tmp/write
+      - /tmp/swtpm2:/tmp/swtpm
+    ports:
+      - "8882:8880"
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.12
+
+  khost3:
+    container_name: khost3
+    image: lockhost-keys-test-khost
+    depends_on:
+      - keys3
+    env_file: .env
+    environment:
+      host_id: "172.77.0.13"
+    volumes:
+      - /tmp/read3:/tmp/read
+      - /tmp/write3:/tmp/write
+      - /tmp/swtpm3:/tmp/swtpm
+    ports:
+      - "8883:8880"
+    networks:
+      locknet:
+        ipv4_address: 172.77.0.13
+
+  atsocat1:
+    container_name: atsocat1
+    image: lockhost-host
+    depends_on:
+      - khost1
+    ports:
+      - "8891:8890"
+    entrypoint: bash -c "sleep 15 && /runtime/atsocat.sh 8890 https://khost1:8880/api/k/v1"
+    networks:
+      locknet:
+
+  atsocat2:
+    container_name: atsocat2
+    image: lockhost-host
+    depends_on:
+      - khost2
+    ports:
+      - "8892:8890"
+    entrypoint: bash -c "sleep 15 && /runtime/atsocat.sh 8890 https://khost2:8880/api/k/v1"
+    networks:
+      locknet:
+
+  atsocat3:
+    container_name: atsocat3
+    image: lockhost-host
+    depends_on:
+      - khost3
+    ports:
+      - "8893:8890"
+    entrypoint: bash -c "sleep 15 && /runtime/atsocat.sh 8890 https://khost3:8880/api/k/v1"
+    networks:
+      locknet:

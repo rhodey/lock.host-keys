@@ -1,0 +1,25 @@
+# base
+FROM lockhost-host
+
+# apks
+COPY apk/repositories.serve /etc/apk/repositories
+RUN apk add --no-cache tpm2-tools tpm2-tss-tcti-swtpm swtpm tpm2-abrmd
+
+# js packages
+WORKDIR /khost
+COPY node/package.json .
+COPY node/package-lock.json .
+RUN npm install
+
+# js sources
+COPY node node
+RUN mv node/* .
+RUN chmod +x khost.sh
+
+ARG PROD=true
+ENV PROD=${PROD}
+
+ARG APP_PCR=null
+ENV APP_PCR=${APP_PCR}
+
+ENTRYPOINT ["/khost/khost.sh"]

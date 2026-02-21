@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+cd /app && npm run test

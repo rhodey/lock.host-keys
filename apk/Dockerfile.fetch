@@ -1,0 +1,10 @@
+# alpine 3.22.2
+FROM alpine@sha256:85f2b723e106c34644cd5851d7e81ee87da98ac54672b29947c052a45d31dc2f
+
+COPY apk/repositories.fetch /etc/apk/repositories
+
+# apks rust
+RUN apk add --no-cache curl build-base git fuse-dev fuse-static fuse
+
+# apks khost and app
+RUN apk add --no-cache tpm2-tools tpm2-tss-tcti-swtpm swtpm tpm2-abrmd

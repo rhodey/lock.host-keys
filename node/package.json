@@ -1,0 +1,33 @@
+{
+  "name": "lock.host-keys",
+  "author": "Rhodey Orbits",
+  "description": "Lock.host key server",
+  "homepage": "https://lock.host",
+  "version": "0.9.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rhodey/lock.host-keys.git"
+  },
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "dependencies": {
+    "split": "^1.0.1",
+    "mkdirp": "^3.0.1",
+    "msgpackr": "^1.11.2",
+    "libsodium-wrappers": "^0.8.2",
+    "tinyraftplus": "github:rhodey/tinyraftplus#main",
+    "@aws-sdk/client-s3": "^3.651.1",
+    "@aws-sdk/client-ec2": "^3.876.0",
+    "@aws-sdk/credential-providers": "^3.970.0",
+    "better-sqlite3": "^12.6.2",
+    "uuid": "^11.1.0",
+    "minimist": "^1.2.8",
+    "js-yaml": "^4.1.1",
+    "cookie": "^1.0.2"
+  },
+  "devDependencies": {
+    "tape": "^5.9.0"
+  }
+}

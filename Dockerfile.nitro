@@ -1,0 +1,35 @@
+# pin
+FROM amazonlinux@sha256:97073cc66ae1fe66d59315987c36f4eeb98242a85086e972b4109bab4cb57454
+
+# nitro-cli
+RUN dnf update -y
+RUN dnf install -y aws-nitro-enclaves-cli-1.4.4-0.amzn2023
+RUN dnf install -y aws-nitro-enclaves-cli-devel-1.4.4-0.amzn2023
+RUN usermod -aG ne root
+RUN usermod -aG docker root
+
+WORKDIR /workspace
+
+# spec
+COPY Dockerfile.app Dockerfile
+
+# apks
+RUN mkdir apk/
+COPY apk/repositories.serve apk/repositories.serve
+
+# bins
+RUN mkdir dist/
+COPY dist/sqlitesuperfs dist/
+
+# sources
+COPY node node
+
+# build eif
+COPY <<EOF /root/cmd.sh
+nitro-cli build-enclave --docker-dir ./ --docker-uri app --output-file app.eif
+nitro-cli describe-eif --eif-path app.eif > app.pcr 2>&1
+EOF
+
+RUN chmod +x /root/cmd.sh
+
+CMD ["bash", "-c", "/root/cmd.sh"]

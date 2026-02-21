@@ -1,0 +1,21 @@
+config:
+  admin_pub_key: "qsbIF9oNMs+7390zjvJqVRvApO6GAd8QMnEnEj/Eicw="
+  key_ami_pcr: db8a64406ce84fe268080d7b34db1c975eeac2ff444990a1f527305fb0602eb2
+  key_servers:
+    keys_a:
+      ec2_region: us-east-1
+      ec2_id: i-0123456
+      host_id: 172.77.0.11
+      psql_url: postgresql://psql:psql@172.77.0.4:5432/psql
+
+    keys_b:
+      ec2_region: us-east-1
+      ec2_id: i-0123456
+      host_id: 172.77.0.12
+      psql_url: postgresql://psql:psql@172.77.0.4:5432/psql
+
+    keys_c:
+      ec2_region: us-east-1
+      ec2_id: i-0123456
+      host_id: 172.77.0.13
+      psql_url: postgresql://psql:psql@172.77.0.4:5432/psql

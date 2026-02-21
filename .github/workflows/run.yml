@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Clone base
+        uses: actions/checkout@v4
+        with:
+          repository: rhodey/lock.host
+          path: wd/lock.host
+
+      - name: Clone app
+        uses: actions/checkout@v4
+        with:
+          path: wd/app
+
+      - name: App
+        run: |
+          sudo apt install -y just
+          cd wd/app && just build-app-vm
+
+      - name: PCR
+        run: |
+          cd wd/app
+          cat dist/app.pcr | grep -e PCR0 -e PCR1 -e PCR2 > PCR.txt
+          sha256sum PCR.txt > hash.txt
+          cat README.md | grep -e PCR0 -e PCR1 -e PCR2 > PCR.txt
+          sha256sum PCR.txt >> hash.txt
+          sha256sum --check hash.txt || exit 1
+          echo "PCR ok"
+
+      - name: Zip
+        uses: actions/upload-artifact@v4
+        if: false
+        with:
+          name: App
+          path: wd/app/dist
