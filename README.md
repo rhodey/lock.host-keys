@@ -1,5 +1,5 @@
 # Lock.host-keys
-The Lock.host key servers operate as a three node [RAFT](https://en.wikipedia.org/wiki/Raft_(algorithm)) cluster and will be available to devs who deploy [WASM](https://en.wikipedia.org/wiki/WebAssembly) apps with us. Devs who want to use the key servers without deploying WASM apps will be able to do WASM registration and use the access keys. We will be doing `us-east-1`, `us-east-2`, and `us-west-2` and the APIs will be:
+The [Lock.host](https://github.com/rhodey/lock.host) key servers operate as a three node [RAFT](https://en.wikipedia.org/wiki/Raft_(algorithm)) cluster and will be available to devs who deploy [WASM](https://en.wikipedia.org/wiki/WebAssembly) apps with us. Devs who want to use the key servers without deploying WASM apps will be able to do WASM registration and use the access keys. We will be doing `us-east-1`, `us-east-2`, and `us-west-2` and the APIs will be:
 ```
 https://use1.lock.host/api/k/v1/*
 https://use2.lock.host/api/k/v1/*
@@ -15,9 +15,9 @@ just build-app
 {
   "Measurements": {
     "HashAlgorithm": "Sha384 { ... }",
-    "PCR0": "aaa7cd98cd454265f5ab8fd288e779ae53c4ce3f100b673c75812e25e9435330aed5e0bd7a96e5136e3c921d9c7b48d7",
+    "PCR0": "f79e45e78659a14103a84a0e912b4f8e00f7e06bd623b84708b6034f1d39a6e257d60e51e8e697f4b1a024cb3d8e9768",
     "PCR1": "4b4d5b3661b3efc12920900c80e126e4ce783c522de6c02a2a5bf7af3a2b9327b86776f188e4be1c1c404a129dbda493",
-    "PCR2": "733a0f04421d455d30f3ac4a7120ca21bce7f809fe31d218ff67dc9a8da546993c6546b68031d51e3483d648345aed82"
+    "PCR2": "1e05638ab3264a705b154d0e82ec8fc260e5188cfa98ff7d25aa069bc966c4dd4b9c9ed07dd17091daacbafecff4edd5"
   }
 }
 ```
