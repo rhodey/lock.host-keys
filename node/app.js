@@ -351,7 +351,7 @@ function onKhostTpmClient(err, txrx) {
 
   const raftLeaderTimer = setTimeout(() => onError(new Error(`tpm raft leader timeout`)), raftLeaderTimeout)
   createTpmRaftNode()
-  raftNode.open().then(() => raftNode.awaitLeader()).then(() => {
+  raftNode.open().then(() => raftNode.awaitLeader(1)).then(() => {
     clearTimeout(raftLeaderTimer)
     raftSecretTimer = setTimeout(() => onError(new Error(`tpm raft secret timeout`)), raftSecretTimeout)
     writeStream(tx, { type: 'tpm_read' })

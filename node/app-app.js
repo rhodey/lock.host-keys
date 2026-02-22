@@ -860,7 +860,7 @@ module.exports = function appApp(pcr1, peers, pcr2, secret, adminKey) {
     createAppRaftNode()
     const raftLeaderTimer = setTimeout(() => onError(new Error(`app raft leader timeout`)), raftLeaderTimeout)
     return server(port3, testFnAppRaft, log, onRaftPeer).then(() => {
-      return raftNode.open().then(() => raftNode.awaitLeader(0)).then(() => {
+      return raftNode.open().then(() => raftNode.awaitLeader(1)).then(() => {
         clearTimeout(raftLeaderTimer)
         return server(port5, testFnAppClient, log, onAppClient)
           .then(() => httpServer.listen(port4, '127.0.0.1', () => log('app app ready')))
