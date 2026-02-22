@@ -17,7 +17,7 @@
     "mkdirp": "^3.0.1",
     "msgpackr": "^1.11.2",
     "libsodium-wrappers": "^0.8.2",
-    "tinyraftplus": "github:rhodey/tinyraftplus#main",
+    "tinyraftplus": "github:rhodey/tinyraftplus#v0.3.0",
     "@aws-sdk/client-s3": "^3.651.1",
     "@aws-sdk/client-ec2": "^3.876.0",
     "@aws-sdk/credential-providers": "^3.970.0",
